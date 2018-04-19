@@ -35,7 +35,7 @@ This vignette is divided in 3 parts:
 
 
 **Remark:** *This vignettes is originally made for me as a reminder of what I learned about the method CDF-t but I hope it could be also useful to others. This vignette reflects my level of understanding of the topic and thus it could contain mistakes or erroneous information (I hope not too big nor too many).
-Constructive comments or suggestions on possible ways to improve this document are welcome. It could for instance be better ways to explain or illustration certain ideas or tips about more efficient R programming. Corrections related to the English language are also welcome.*
+Constructive comments or suggestions on possible ways to improve this document are welcome. For instance, it could be about better ways to explain or illustrate certain ideas or tips about more efficient ways to program in R. Corrections related to the English language are also welcome.*
 
 ## Bias correction and the method CDF-t
 
@@ -45,7 +45,7 @@ Bias correction consists in post-processing a dataset to make it closer in a sta
 
 In climate sciences, bias correction often refer to the process of correcting outputs of climate models (e.g. GCM: General Circulation Models, RCM: Regional Climate Models) with respect to observations. Indeed, climate models are not perfectly able to reproduce the climate dynamic and exhibits errors related for instance to the limited spatial resolution of the model, the parametrisation of unresolved processes, or uncertainties in the model initialization [@ehret_hess_2012]. 
 
-There exists various methods of bias corrections [e.g. see @maraun_bias_2016] but the CDF-t method can be seen as an extension of the widely-applied quantile mapping (also referred as quantile matching, or quantile-quantile correction) method [see e.g. @deque_frequency_2007; @piani_statistical_2010].
+There exists various methods of bias corrections [see e.g. @maraun_bias_2016] but the CDF-t method can be seen as an extension of a widely-applied univariate bias-correction method, the so-called quantile mapping (also referred as quantile matching, or quantile-quantile correction) method [see e.g. @deque_frequency_2007; @piani_statistical_2010].
 
 #### Quantile mapping
 
@@ -55,7 +55,7 @@ In the quantile mapping method, we consider two datasets:
 
 - O, (standing for Observations) is the reference dataset. O is supposed to follow a distribution with cumulative distribution function $F_O$
 
-In the quantile mapping method, we look for a mapping $M$ such that after transformation, G follows the same distribution as O.
+In the quantile mapping method, we look for a mapping $M$ such that after transformation, G follows the same distribution as O:
 
 $$ M(G) \sim F_ O$$
 
@@ -74,15 +74,15 @@ In the CDF-t framework, 3 datasets are considered:
 
 - $G_{cal}$, stands for "GCM data in the calibration period" . $G_{cal}$ is supposed to follow a distribution with cumulative distribution function $F_{G, Cal}$.
 
-- $O_{cal}$, stands for "Observations in the calibration period" and corresponds to the reference dataset in the calibration period. O is supposed to follow a distribution with cumulative distribution function $F_{O, Cal}$
+- $O_{cal}$, stands for "Observations in the calibration period" and corresponds to the reference dataset in the calibration period. O is supposed to follow a distribution with cumulative distribution function $F_{O, Cal}$.
 
 - $G_{val}$, stands for "GCM data in the validation period". $G_{val}$ is supposed to follow a distribution with cumulative distribution function $F_{G, Val}$.
 
-**Remark:** *Termininlogy-wise, the validation period is often refered as the "future" or "projection"" period since CDF-t is often applied to correct climate model projections for the future in opposition to the "present"" of the "historical" period for which observations are available (this period is refered here as the calibration period). However, CDF-t can also be used to  correct data from the past or the present. In the same way, we refer to observational data and GCM data since it relates to many applications in climate sciences but the method CDF-t can simply thougth as a method to correct one dataset (here, the GCM outputs) with respect to a dataset of reference (here, the observations) whenever the reference data are available in the calibration period but not in the validation period.*
+**Remark:** *Termininlogy-wise, the validation period is often refered as the "future" or "projection"" period since CDF-t is often applied to correct climate model projections for the future in opposition to the "present"" of the "historical" period for which observations are available (this period is refered here as the calibration period). However, CDF-t can also be used to  correct data from the past or the present. In the same way, we refer to observational data and GCM data since it relates to many applications in climate sciences but the method CDF-t can simply thought as a method to correct one dataset (here, the GCM outputs) with respect to a dataset of reference (here, the observations) whenever the reference data are available in the calibration period but not in the validation period.*
 
 The objective is to correct $G_{val}$ such that after correction $G_{val}$ follows the same distribution as $O_{val}$, the observations that we would observe in the validation period. Those hypothetical observations are assumed to follow an unknown distribution $F_{O, Val}$. 
 
-Since $F_{O, Val}$ is unknown, we assume that there exists a transformation $T$ such that :
+Since $F_{O, Val}$ is unknown, we assume that there exists a transformation $T$ such that:
 
 $$ T(F_{G, Cal}(x)) = F_{O, Cal}(x) $$
 
@@ -106,7 +106,7 @@ M(x) &= F^{-1}_{O, Val} \circ F_{G, Val}(x) \\
 
 
 #### Implementation
-the CDF-t method implemented in the `CDFt` package follows these steps:
+the CDF-t method implemented in the `CDFt` package follows these two steps:
 
 1) Reconstruct $F_{O, Val}$ from $F_{O, Cal}$, $F_{G, Cal}$ and $F_{G, Val}$.
 
@@ -147,7 +147,7 @@ In this toy example, we consider four variables:
 - `O_val` plays the role of the observational data in the validation period and is supposed unknown.
 
 The goal is to transform the data `G_val` so that the transformed data have the same distribution as `O_val` which is unknown to us.
-In the CDF-t method, it is implicitly assumed that the evolution of the data distribution observed in the GCM from a time period to another would also makes sense for the evolution of the observation distributions [@vrac_dynamical_2012]. It means that there exists a same transformation that turns the distribution of `O_cal` into the distribution of `O_val` and that turns distribution of `G_cal` into the distribution of `G_val`. For our example, we apply a linear transformation such that from calibration period to the validation period, the variance of the distribution has been multiplied by 10^2^ and its mean has been multiplied by 10 and then increased by 3. In the toy example, the GCM datasets, `G_cal` and `G_val` are constructed from a uniform distribution where as the observational datasets, O_cal and O_val, are constructed using a Gaussian distribution. 
+In the CDF-t method, it is implicitly assumed that the evolution of the GCM data distributions from a time period to another would also makes sense for the evolution of the observation distributions [@vrac_dynamical_2012]. It means that there exists a same transformation that turns the distribution of `O_cal` into the distribution of `O_val` and that turns distribution of `G_cal` into the distribution of `G_val`. For our example, we apply a linear transformation such that from calibration period to the validation period, the variance of the distribution has been multiplied by 10^2^ and its mean has been multiplied by 10 and then increased by 3. In the toy example, the GCM datasets, `G_cal` and `G_val` are constructed from a uniform distribution where as the observational datasets, O_cal and O_val, are constructed using a Gaussian distribution. 
 
 #### Simulations
 
@@ -181,7 +181,7 @@ hist(G_val, breaks = breaks, freq = FALSE, border = "brown", ylim = ylim)
 hist(O_val, breaks = breaks, freq = FALSE, border = "red", ylim = ylim)
 ```
 
-The empirical distributions of the simulated data can also be represented by cumulative distribution functions
+The empirical distributions of the simulated data can also be represented by cumulative distribution functions.
 
 #### Empirical cumulative distribution functions
 
@@ -236,7 +236,7 @@ The `CDFt` function returns a list with the following elements:
 
 ### Evaluating the correction
 
-Let us compare the distribution of the corrected data with respect to the distribution of `O_val`. We look at histogram, cumulative distributions functions and QQ-plots (quantile-quantile plots). For this comparison, the bias-corrected data are evaluated with respect to the theoretical distribution of `O_val` and also to empirical distribution of `O_val`. Indeed, in practice, the theoretical distribution of `O_val` would be unknown and to evaluate a bias corrected-method on actual cases, one could split the data into a calibration part and a validation (see the climate application part). There could be differences when comparing with respect to the theoretical or empirical distribution of `O_val` due to sampling effect. Indeed, the empirical distribution of `O_val` is a random variable.
+Let us compare the distribution of the corrected data with respect to the distribution of the reference, `O_val`. We look at histogram, cumulative distributions functions and QQ-plots (quantile-quantile plots). For this comparison, the bias-corrected data are evaluated with respect to the theoretical distribution of `O_val` and also to empirical distribution of `O_val`. Indeed, in practice, the theoretical distribution of `O_val` would be unknown and to evaluate a bias-corrected method on actual cases, one could split the data into a calibration part and a validation (see the climate application part). There could be differences when comparing with respect to the theoretical or empirical distribution of `O_val` due to sampling effect. Indeed, the empirical distribution of `O_val` is a realisation of a random variable.
 
 #### Histograms
 
@@ -285,7 +285,7 @@ qqplot(O_val, G_val, xlim = xlim, ylim = xlim, main = "QQ-plot before correction
 abline(b = 1, a = 0, col = "red")
 ```
 
-From a qualitative standpoint, we see that after the correction, the `G_val` data have a statistical distribution closer to the distribution of `O_val`. In the following, we use the two-sample Kolmogorov-Smirnov test to quantify if the bias-corrected data are actually closer distribution-wise of `O_val`.
+From a qualitative standpoint, we see that after the correction, the `G_val` data have a statistical distribution closer to the distribution of `O_val`. In the following, we use the two-sample Kolmogorov-Smirnov test to quantify whether the bias-corrected data are actually closer distribution-wise of `O_val`.
 
 #### Two-sample Kolmogorov-Smirnov tests
 
@@ -303,12 +303,12 @@ ks.test(G_val, O_val)
 rm(list = ls())
 ```
 
-The test statistic of the Kolmogorov-Smirnov test reflect a distance between two distributions. The distance between the bias-corrected data `cdft_bc$DS`to the theoretical distribution of `O_val` is smaller than the distance between empirical distribution of `G_val` to the theoretical distribution of `O_val`. This shows that after correction, the `G_val` are closer to `O_val` in terms of distribution.  However, in both cases, the p-values of the the Kolmogorov-Smirnov tests are very small (p-value < 10^-6^, meaning that we can reject with high confidence the null hypotheses  of `cdft_bc$D` or `G_val` having the same distribution as `O_val`. We obtain similar results when the bias corrected data are compared to the empirical distribution of `O_val`. Thus, the CDF-t bias correction is not perfect but it still provides an improvement.
+The test statistic of the Kolmogorov-Smirnov test reflects a distance between two distributions. The distance between the bias-corrected data `cdft_bc$DS`to the theoretical distribution of `O_val` is smaller than the distance between empirical distribution of `G_val` to the theoretical distribution of `O_val`. This shows that after correction, the `G_val` are closer to `O_val` in terms of distribution.  However, in both cases, the p-values of the the Kolmogorov-Smirnov tests are very small (p-value < 10^-6^, meaning that we can reject with high confidence the null hypotheses  of `cdft_bc$D` or `G_val` having the same distribution as `O_val`. We obtain similar results when the bias-corrected data are compared to the empirical distribution of `O_val`. Thus, the CDF-t bias correction is not perfect but it nonetheless increases the similarity between `G_val` and the reference `O_val`.
 
 
 ## Climate application
 
-In this part, we apply the method CDF-t to an example that is closer to an actual application in climate sciences. The goal is to correct the ERA-Interim reanalysis [@dee_d._p._erainterim_2011] is the South-East of France ([2E, 7.5E] x [42N, 45]) using as reference,  data from CORDEX [Coordinated Regional Climate Downscaling Experiment,  @jacob_euro-cordex:_2014]. To be more specific, what we use and refer to as CORDEX data hereafter in this example is one dataset produced for the CORDEX evaluation: it was produced by the institutions IPSL-INERIS and it corresponds to the run r1i1p1 made for Europe using the regional model WRF331F with forcings provided by the ERA-Interim reanalysis [@vautard_simulation_2013].  The CORDEX data have a higher spatial resolution than the ERA-Interim reanalysis, and thus in this case the bias-correction method CDF-t can also be considered as a statistical downscaling technique. In this example, we will only focus on the temperature at surface at the daily time scale.
+In this part, we apply the method CDF-t to an example that is closer to an actual application in climate sciences. The goal is to correct the ERA-Interim reanalysis [@dee_d._p._erainterim_2011] is the South-East of France ([2E, 7.5E] x [42N, 45]) using as reference,  data from CORDEX [Coordinated Regional Climate Downscaling Experiment,  @jacob_euro-cordex:_2014]. To be more specific, what we use and refer to as CORDEX data hereafter in this example is only one dataset produced for the CORDEX evaluation. It was produced by the institutions IPSL-INERIS and it corresponds to the run r1i1p1 made for Europe using the regional model WRF331F with forcings provided by the ERA-Interim reanalysis [@vautard_simulation_2013].  The CORDEX data have a higher spatial resolution than the ERA-Interim reanalysis, and thus in this case the bias-correction method CDF-t can also be considered as a statistical downscaling technique. In this example, we will only focus on the temperature at surface at the daily time scale.
 
 ### Data
 
@@ -330,15 +330,15 @@ The file `bc_tas_erai2cordex.rdata` contains 6 variables.
 
 - `cordex_latlon` is a two-column data.frame containing the latitude and the longitude of the grid points of the the CORDEX simulations.
 
-- `erai_tas_calval`,  same as `cordex_tas_calval` but for the ERA-Interim reanalyses.
+- `erai_tas_calval`,  same as `cordex_tas_calval` but for the ERA-Interim reanalysis.
 
-- `erai_latlon`, same as `cordex_tas_latlon` but for the ERA-Interim reanalyses.
+- `erai_latlon`, same as `cordex_tas_latlon` but for the ERA-Interim reanalysis.
 
-- `time_calval` is a list of two vectors. The fist one contains the dates for the calibration period and the second one the dates for the validations period. The dates in time_calval are the same for the CORDEX simulations and the ERA-Interim reanalyses. The calibration period goes from 1989-01-01 to 1998-12-31 and the validation period from 1999-01-01 to 2008-12-31.
+- `time_calval` is a list of two vectors. The fist one contains the dates for the calibration period and the second one the dates for the validations period. The dates in time_calval are the same for the CORDEX simulations and the ERA-Interim reanalysis. The calibration period goes from 1989-01-01 to 1998-12-31 and the validation period from 1999-01-01 to 2008-12-31.
 
 - `nearestn_bc` contains the ERA-Interim data interpolated to the CORDEX grid points using nearest neighbor interpolation. It is a list of two matrices, one for the calibration period and one for the validation. The matrices have the same dimensions as the matrices in `cordex_tas_calval`.
 
-To have a idea of the data, we plot the temperatures for the the first day of the calibration period.
+To have a idea of the data, we plot the temperature for the the first day of the calibration period.
 
 #### Visualisation
 
@@ -402,7 +402,7 @@ map_dat(dat_latlon = cordex_latlon, dat = cordex_tas_calval$cal[, 1],
 ```
 
 The spatial resolution of CORDEX is higher than the spatial resolution of ERA-Interim.
-Here is what we obtain if we interpolate the data from ERA-Interim to the CORDEX grid points using nearest neighbor interpolation.
+Here is what we obtain if we interpolate the data from ERA-Interim to the CORDEX grid points using nearest-neighbor interpolation.
 
 ```{r nn_cal, include=TRUE, fig.width=4, fig.height=3.2, fig.show='hold'}
 break_lim <- range(erai_tas_calval$cal[, 1], cordex_tas_calval$cal[, 1]) + c(-1, 1)
@@ -418,7 +418,7 @@ map_dat(dat_latlon = cordex_latlon, dat = cordex_tas_calval$cal[, 1],
         palette = rainbow)
 ```
 
-The interpolated data show a pattern of temperature similar to the CORDEX simulation, but lack details at a finer scale.
+The interpolated  ERA-Interim data show a pattern of temperature similar to the CORDEX simulation, but lack details at a finer scale.
 
 ### Applying CDF-t to correct the interpolated ERA-Interim data
 
@@ -444,7 +444,7 @@ cdft_bc <- bcorrect_all(cordex_tas_calval$cal, nearestn_bc$cal, nearestn_bc$val)
 ```
 ### Evaluating the correction
 
-Let us plot for each day the ERA-Interim data bias corrected with CDF-t along with the CORDEX and the interpolated ERA-Interim data.
+Let us plot for each day the ERA-Interim data bias-corrected with CDF-t along with the CORDEX and the interpolated ERA-Interim data.
 
 #### Temperature maps
 
@@ -541,9 +541,9 @@ saveHTML(animate_bs(),
 <iframe src="bs_animation.html",  width="800" height="300"></iframe> 
 <br>
 
-Quantitatively, the bias corrected data with CDF-t does not reproduce perfectly the CORDEX data in the validation period but compared to the interpolated ERA-Interim data, it exhibits spatial structures that are closer what is observed in the CORDEX data.
+Quantitatively, the bias-corrected data with CDF-t does not reproduce perfectly the CORDEX data in the validation period but compared to the interpolated ERA-Interim data, it exhibits spatial structures that are closer what is observed in the CORDEX data.
 
-To have a quantitative score on whether CDF-t improve the similarity between the CORDEX and ERAI-Interim distribution at each grid point, we compute the difference of p-values of two-sample Kolmogorov-Smirnov tests respectively between the CORDEX data and the bias corrected data with CDF-t and between the CORDEX data and the interpolated ERA-Interim data. When the difference is positive (respectively negative) this means that CDF-t improves (respectively degrades) the statistical similarity with the CORDEX data with respect to the interpolated ERA-Interim data. 
+To have a quantitative score on whether CDF-t improve the similarity between the CORDEX and ERAI-Interim distribution at each grid point, we compute the difference of p-values of two-sample Kolmogorov-Smirnov tests respectively between the CORDEX data and the bias-corrected data with CDF-t and between the CORDEX data and the interpolated ERA-Interim data. When the difference is positive (respectively negative), it means that CDF-t improves (respectively degrades) the statistical similarity with the CORDEX data with respect to the interpolated ERA-Interim data. 
 
 #### Two-sample Kolmogorov-Smirnov tests
 
@@ -597,11 +597,11 @@ ixaxis <- which(format(xaxis, "%m") == "01" & format(xaxis, "%d") == "01")
 ixaxis <- ixaxis[seq(1, length(ixaxis), length.out = 10)]
 xaxis <- xaxis[ixaxis]
 axis(1, at = time_calval$val[ixaxis], labels=xaxis)
-legend("bottomleft", legend = c("bias corrected vs cordex", "erai vs cordex"), lty = 1, col = 1:2)
+legend("bottomleft", legend = c("bias-corrected vs cordex", "erai vs cordex"), lty = 1, col = 1:2)
 
 ```
 
-Compared to the ERA-Interim data interpolated with the method of nearest neighbor, the CDF-t bias-corrected data exhibits higher spatial correlation with the CORDEX data at each time step. We note that the spatial correlation between the CDF-t bias-corrected data and CORDEX data is not stable through time. The spatial correlation decreases at time when the correlation between the ERA-Interim interpolated data and the CORDEX data is also not as high as usual.
+Compared to the ERA-Interim data interpolated with the method of nearest neighbor, the CDF-t bias-corrected data tends to exhibit higher spatial correlation with the CORDEX data at each time step. We note that the spatial correlation between the CDF-t bias-corrected data and CORDEX data is not stable through time. The spatial correlation decreases at time when the correlation between the ERA-Interim interpolated data and the CORDEX data is also not as high as usual.
 
 ## Conclusion
 In this vignette, we wanted to provide a quick introduction to the CDF-t method and presents its implementation in the R package `CDFt`. We hope that we managed to give a feel on how the method and the package work and how it could be applied in the context of climate sciences.
