@@ -312,7 +312,7 @@ In this part, we apply the method CDF-t to an example that is closer to an actua
 
 ### Data
 
-To facilitate their use in this vignette, the data from CORDEX and ERA-Interim have been prepared and compiled in an .rdata file `bc_tas_erai2cordex.rdata`. It is available [here](https://files.lsce.ipsl.fr/public.php?service=files&t=0c4e4e26e1554ebd6df0d5a083cae298&download).
+To facilitate their use in this vignette, the data from CORDEX and ERA-Interim have been prepared and compiled in an .rdata file `bc_tas_erai2cordex.rdata`. It is available [here](https://sharebox.lsce.ipsl.fr/index.php/s/EcDNdgcu8BGhOiP).
 
 The original CORDEX data can accessed following those [instructions](http://www.cordex.org/data-access/how-to-access-the-data/).
 
